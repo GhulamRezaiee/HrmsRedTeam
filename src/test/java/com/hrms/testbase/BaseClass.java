@@ -5,8 +5,9 @@ import java.util.concurrent.TimeUnit;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
-
+import org.openqa.selenium.firefox.FirefoxOptions;
 
 import com.hrms.utils.ConfigsReader;
 import com.hrms.utils.Constants;
@@ -21,16 +22,29 @@ public class BaseClass {
 
 		ConfigsReader.readProperties(Constants.CONFIGURATION_FILEPATH);
 		System.setProperty(ChromeDriverService.CHROME_DRIVER_LOG_PROPERTY, "true");
-
+		String headless = ConfigsReader.getProperty("headless");
+		
 		switch (ConfigsReader.getProperty("browser").toLowerCase()) {
-
+		
 		case "chrome":
 			WebDriverManager.chromedriver().setup();
-			driver = new ChromeDriver();
+			ChromeOptions cOption = new ChromeOptions();
+			if(headless.equalsIgnoreCase("true")) {
+				cOption.setHeadless(true);
+				driver = new ChromeDriver(cOption);
+			}else {
+			driver = new ChromeDriver(cOption);
+			}
 			break;
 		case "firefox":
 			WebDriverManager.firefoxdriver().setup();
-			driver = new FirefoxDriver();
+			FirefoxOptions fOption = new FirefoxOptions();
+			if(headless.equalsIgnoreCase("true")) {
+				fOption.setHeadless(true);
+				driver = new FirefoxDriver(fOption);
+			}else {
+			driver = new FirefoxDriver(fOption);
+			}
 			break;
 		default:
 			throw new RuntimeException("Browser is not supported");
